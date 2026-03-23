@@ -4,7 +4,8 @@ import Dashboard from './components/Dashboard';
 import UnitDetail from './components/UnitDetail';
 import Records from './components/Records';
 import Settings from './components/Settings';
-import { Settings as SettingsIcon, Home, AlertOctagon, Search, Blocks } from 'lucide-react';
+import Overview from './components/Overview';
+import { Settings as SettingsIcon, Home, AlertOctagon, Search, Blocks, Info } from 'lucide-react';
 
 const INITIAL_UNITS: UnitData[] = Array.from({ length: 6 }, (_, i) => {
   const letter = String.fromCharCode(65 + i); // A, B, C, D, E, F
@@ -30,12 +31,12 @@ const INITIAL_UNITS: UnitData[] = Array.from({ length: 6 }, (_, i) => {
   };
 });
 
-type ViewState = 'dashboard' | 'records' | 'settings';
+type ViewState = 'overview' | 'dashboard' | 'records' | 'settings';
 
 export default function App() {
   const [units, setUnits] = useState<UnitData[]>(INITIAL_UNITS);
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
-  const [currentView, setCurrentView] = useState<ViewState>('dashboard');
+  const [currentView, setCurrentView] = useState<ViewState>('overview');
 
   const selectedUnit = units.find(u => u.id === selectedUnitId);
 
@@ -74,6 +75,17 @@ export default function App() {
           
           {/* Global Action Buttons */}
           <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <button 
+              onClick={() => { setCurrentView('overview'); setSelectedUnitId(null); }}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${
+                currentView === 'overview' 
+                  ? 'bg-blue-100 text-blue-700 shadow-sm border border-blue-200' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+              }`}
+            >
+              <Info size={22} />
+              项目概览
+            </button>
             <button 
               onClick={() => { setCurrentView('dashboard'); setSelectedUnitId(null); }}
               className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${
@@ -120,6 +132,9 @@ export default function App() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto p-6 relative">
+          {currentView === 'overview' && (
+            <Overview />
+          )}
           {currentView === 'dashboard' && (
             <Dashboard units={units} onSelectUnit={setSelectedUnitId} />
           )}
